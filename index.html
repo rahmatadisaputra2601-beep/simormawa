@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ormawa</title>
+    <style>
+body {
+    font-family: Arial;
+    background: #f2f2f2;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+}
+
+.container {
+    max-width: 500px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+input {
+    width: 70%;
+    padding: 8px;
+}
+
+button {
+    padding: 8px 10px;
+    cursor: pointer;
+}
+
+li {
+    background: #eaeaea;
+    margin-top: 10px;
+    padding: 8px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+</style>
+</head>
+<body><div id="loginBox">
+    <h2>Login Admin</h2>
+
+    <input type="password" id="password" placeholder="Password">
+
+    <button onclick="login()">Login</button>
+
+    <p id="error" style="color:red;"></p>
+</div>
+<button onclick="logout()">Logout</button>
+<div id="app" style="display:none;">
+
+<h1>📋 Sistem Data Ormawa</h1>
+
+<input type="text" id="nama" placeholder="Masukkan nama anggota">
+<button onclick="tambah()">Tambah</button>
+
+<h2>Daftar Anggota</h2>
+<ul id="list"></ul>
+
+<script>
+// =====================
+// LOGIN SYSTEM
+// =====================
+
+function login() {
+    let pass = document.getElementById("password").value;
+    let errorBox = document.getElementById("error");
+
+    if (pass === "1234") {
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("app").style.display = "block";
+
+        localStorage.setItem("login", "true");
+        errorBox.innerText = "";
+    } else {
+        errorBox.innerText = "Password salah bro";
+        console.log("SALAH PASSWORD");
+    }
+}
+    let pass = document.getElementById("password").value;
+
+    if (pass === "1234") {
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("app").style.display = "block";
+
+        localStorage.setItem("login", "true");
+    } else {
+        document.getElementById("error").innerText = "Password salah bro";
+    }
+}
+function logout() {
+    document.getElementById("app").style.display = "none";
+    document.getElementById("loginBox").style.display = "block";
+
+    document.getElementById("password").value = "";
+
+    localStorage.removeItem("login");
+}
+
+
+// =====================
+// DATA ORMAWA
+// =====================
+
+function getData() {
+    return JSON.parse(localStorage.getItem("anggota")) || [];
+}
+
+function saveData(data) {
+    localStorage.setItem("anggota", JSON.stringify(data));
+}
+
+function loadData() {
+    let data = getData();
+    let list = document.getElementById("list");
+
+    list.innerHTML = "";
+
+    data.forEach((nama, index) => {
+        let li = document.createElement("li");
+        li.textContent = (index + 1) + ". " + nama + " ";
+
+        let btn = document.createElement("button");
+        btn.textContent = "Hapus";
+        btn.onclick = function () {
+            hapus(index);
+        };
+
+        li.appendChild(btn);
+        list.appendChild(li);
+    });
+}
+
+function tambah() {
+    let nama = document.getElementById("nama").value;
+
+    if (nama === "") {
+        alert("Isi nama dulu bro");
+        return;
+    }
+
+    let data = getData();
+    data.push(nama);
+
+    saveData(data);
+
+    document.getElementById("nama").value = "";
+    loadData();
+}
+
+function hapus(index) {
+    let data = getData();
+    data.splice(index, 1);
+
+    saveData(data);
+    loadData();
+}
+
+
+// =====================
+// AUTO LOAD
+// =====================
+
+window.onload = function () {
+
+    // cek login
+    if (localStorage.getItem("login") === "true") {
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("app").style.display = "block";
+    }
+
+    loadData();
+};
+document.getElementById("password").addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+        login();
+    }
+});
+</script>
+</body>
+<script>
+
+function login() {
+    let pass = document.getElementById("password").value;
+    let errorBox = document.getElementById("error");
+
+    if (pass === "1234") {
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("app").style.display = "block";
+
+        errorBox.innerText = "";
+        localStorage.setItem("login", "true");
+    } else {
+        errorBox.innerText = "Password salah bro";
+    }
+}
+
+function logout() {
+    document.getElementById("loginBox").style.display = "block";
+    document.getElementById("app").style.display = "none";
+
+    localStorage.removeItem("login");
+}
+
+window.onload = function () {
+    if (localStorage.getItem("login") === "true") {
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("app").style.display = "block";
+    }
+};
+
+</script>
+</html>
